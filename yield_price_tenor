@@ -26,9 +26,6 @@ def indicative_price(m,t,ytm,fv,c):
     # c - coupon
     return ((fv * c / m * (1 - (1 + ytm / m) ** (-m * t))) / (ytm / m)) + fv * (1 + (ytm / m)) ** (-m * t)
 
-
-
-
 print(yield_curve("Corporates", '20/01/26', "BBB-"))
 print(indicative_price(2, yield_curve("Corporates", '20/01/26', "BBB-")[1], yield_curve("Corporates", '20/01/26', "BBB-")[0], 100, 0.1466))
 

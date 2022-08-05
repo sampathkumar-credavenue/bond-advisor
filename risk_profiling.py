@@ -93,16 +93,47 @@ def investor_grid_estimator(questions):
 investor_grid_number = 8
 
 def grid_based_recommendation(questions, investor_grid_number, instruments):
-    instruments['grid_number']
+    grid_instruments = instruments.loc[instruments['grid_number'] == investor_grid_number, :]
+    grid_instruments['tenor'] = ((pd.to_datetime(grid_instruments['maturity_date'], format='%d-%m-%Y') - pd.to_datetime('today')).dt.days / 365)
 
+    # Interest Payment Frequency
+    desired_int_freq = questions.loc[questions['Q.No'] == 7, 'Answer'].values[0]
+    if desired_int_freq != 'Does not matter':
+        grid_instruments = grid_instruments.loc[grid_instruments['interest_payment_frequency'] == desired_int_freq, :]
 
+    # Taxation
+    if questions.loc[questions['Q.No'] == 7, 'Answer'].values[0] == 'Yes':
+        grid_instruments = grid_instruments.loc[grid_instruments['is_tax_free'] == True, :]
 
+    # Investment Amount
+    mapper_amount = {'a': 100000, 'b':200000, 'c':500000, 'd':np.nan}
+    upper_limit_amount = mapper_amount[questions.loc[questions['Q.No'] == 6, 'Option'].values[0]]
+    if questions.loc[questions['Q.No'] == 6, 'Option'].values[0] != 'd':
+        grid_instruments = grid_instruments.loc[grid_instruments['face_value'] <= upper_limit_amount, :]
 
-    mapper_tenor = {'a':, 'b':, 'c':, 'd':}
-    mapper_tenor = {'a':, 'b':, 'c':, 'd':}
+    # Distance Measure
+    mapper_tenor = {'a': 0.5, 'b': 2, 'c': 4, 'd': 6}
+    desired_tenor = mapper_tenor[questions.loc[questions['Q.No'] == 5, 'Option'].values[0]]
 
+        # Z Score Normalization...
+    from scipy.spatial import distance
+    from sklearn.preprocessing import StandardScaler
+    sc = StandardScaler()
+    grid_instruments[['tenor_norm', 'liq_risk_value_norm']] = sc.fit_transform(grid_instruments[['tenor', 'liq_risk_value']])
 
+    if questions.loc[questions['Q.No'] == 4, 'Option'].values[0] == 'a': # Liquidity Check
+        desired_liq_risk_value = 1
+    elif questions.loc[questions['Q.No'] == 4, 'Option'].values[0] == 'b':
+        desired_liquidity_value = 14
 
+    desired_params = pd.DataFrame([], columns=['tenor', 'liq_risk_value'])
+    desired_params.loc[0, :] = [desired_tenor, desired_liq_risk_value]
+    desired_params[['desired_tenor_norm', 'desired_liq_risk_value_norm']] = sc.transform(desired_params)
+
+    # Similarity Index
+    grid_instruments['euclidean'] = [distance.euclidean(list(grid_instruments.loc[i, ['tenor_norm', 'liq_risk_value_norm']]), list(desired_params.loc[0, ['desired_tenor_norm', 'desired_liq_risk_value_norm']])) for i in grid_instruments.index]
+    most_similar_isins = list(grid_instruments.sort_values(['euclidean', 'liq_risk_value'], ascending=[True, True])['isin'])[0:2]
+    return most_similar_isins
 
     ########-----------------------
 

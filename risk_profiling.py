@@ -74,8 +74,8 @@ def risk_grid_assignor(instruments):
 
 instruments = risk_grid_assignor(instruments)
 
-
 questions = pd.read_excel('D:/anand.ts/Desktop/Hackathon/Risk assessment.xlsx')
+
 def investor_grid_estimator(questions):
 
     # Mapping the Investor the Grid
@@ -137,6 +137,65 @@ def grid_based_recommendation(questions, investor_grid_number, instruments):
 
     ########-----------------------
 
+
+### PEOPLE SIMILAR TO YOU HAVE INVESTED IN THIS
+inv_details = pd.read_csv('investor_details_database.csv')
+inv_transactions = pd.read_csv('investor_portfolio_database.csv')
+current_investor_id = 4
+
+def similar_user_based_recommendation(current_investor_id, inv_details, inv_transactions):
+
+    inv_transactions['market_risk_value_grid'] = 1
+    inv_transactions.loc[inv_transactions['duration'] > 0.5, 'market_risk_value_grid'] = 2
+    inv_transactions.loc[inv_transactions['duration'] > 1, 'market_risk_value_grid'] = 3
+    inv_transactions.loc[inv_transactions['duration'] > 2, 'market_risk_value_grid'] = 4
+    inv_transactions.loc[inv_transactions['duration'] > 3, 'market_risk_value_grid'] = 5
+    inv_transactions.loc[inv_transactions['duration'] > 4, 'market_risk_value_grid'] = 6
+
+    inv_transactions['grid_number'] = 0
+    inv_transactions.loc[(inv_transactions['credit_risk_value_grid'] >= 12) & (inv_transactions['market_risk_value_grid'].isin([1, 2])), 'grid_number'] = 1
+    inv_transactions.loc[(inv_transactions['credit_risk_value_grid'].isin([10, 11])) & (inv_transactions['market_risk_value_grid'].isin([1, 2])), 'grid_number'] = 2
+    inv_transactions.loc[(inv_transactions['credit_risk_value_grid'] <= 9) & (inv_transactions['market_risk_value_grid'].isin([1, 2])), 'grid_number'] = 3
+    inv_transactions.loc[(inv_transactions['credit_risk_value_grid'] >= 12) & (inv_transactions['market_risk_value_grid'].isin([3, 4])), 'grid_number'] = 4
+    inv_transactions.loc[(inv_transactions['credit_risk_value_grid'].isin([10, 11])) & (inv_transactions['market_risk_value_grid'].isin([3, 4])), 'grid_number'] = 5
+    inv_transactions.loc[(inv_transactions['credit_risk_value_grid'] <= 9) & (inv_transactions['market_risk_value_grid'].isin([3, 4])), 'grid_number'] = 6
+    inv_transactions.loc[(inv_transactions['credit_risk_value_grid'] >= 12) & (inv_transactions['market_risk_value_grid'] >= 5), 'grid_number'] = 7
+    inv_transactions.loc[(inv_transactions['credit_risk_value_grid'].isin([10, 11])) & (inv_transactions['market_risk_value_grid'] >= 5), 'grid_number'] = 8
+    inv_transactions.loc[(inv_transactions['credit_risk_value_grid'] <= 9) & (inv_transactions['market_risk_value_grid'] >= 5), 'grid_number'] = 9
+
+    perc_of_inv_in_your_grid =
+
+    # Finding the Similarity
+    current_inv_details = inv_details.loc[inv_details['investor_id'] == current_investor_id, :]
+    current_inv_details.index = [0]
+    req_db = inv_details.loc[(inv_details['state'] == current_inv_details['state'].values[0]) &
+                             (inv_details['marital_status'] == current_inv_details['marital_status'].values[0]), :]
+    req_db = req_db.loc[req_db['investor_id']!=current_investor_id, :]
+
+    # Z Score Normalization...
+    from scipy.spatial import distance
+    from sklearn.preprocessing import StandardScaler
+    sc = StandardScaler()
+    req_db[['age_norm', 'salary_norm']] = sc.fit_transform(req_db[['age', 'salary']])
+    current_inv_details[['age_norm', 'salary_norm']] = sc.transform(current_inv_details[['age', 'salary']])
+    req_db['euclidean'] = [distance.euclidean(list(req_db.loc[i, ['age_norm', 'salary_norm']]), list(current_inv_details.loc[0, ['age_norm', 'salary_norm']])) for i in req_db.index]
+    req_db = req_db.sort_values(['euclidean'], ascending=[True])
+    req_db.index = range(0, req_db.shape[0])
+
+    # Similar Investor's Trade
+    similar_inv_trade = inv_transactions.loc[inv_transactions['investor_id'] == req_db.loc[0, 'investor_id'], :]
+
+    # % of Transactions in the Same Grid by your Similar Customers [Top 5 Considered to be the most Similar Investors]
+    current_inv_transactions = inv_transactions.loc[inv_transactions['investor_id'] == current_investor_id, :]
+    if req_db.shape[0] < 5:
+        inv_transactions.loc[inv_transactions['investor_id'].isin(list(req_db['investor_id'])), :]
+    else:
+
+    # Similar Investor Based Summary on Risk Taking Levels  
+
+    return similar_inv_trade
+
+
 i=214
 settlement_date = pd.to_datetime('today')
 maturity_date = pd.to_datetime(instruments['maturity_date'][i], format='%d-%m-%Y')
@@ -148,12 +207,5 @@ macaulay_duration(settlement_date, maturity_date, coupon_rate, yield_rate, no_of
 instruments['isin'][i]
 
 
-
-
-def risk_calculator(df):
-    ### Estimate the Credit Risk, Interest Rate Risk and Liquidity Risk as per SEBI Guidelines
-
-    {}
-    df['credit_risk_value'] =
 
 x, y = macaulay_duration(settlement_date, maturity_date, coupon_rate, yield_rate, no_of_int_payments_per_year)

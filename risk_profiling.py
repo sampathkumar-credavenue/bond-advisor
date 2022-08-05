@@ -91,38 +91,38 @@ def investor_grid_estimator(questions):
     return investor_grid_number
 
 investor_grid_number = 8
-
-def grid_based_recommendation(questions, investor_grid_number, instruments):
-    instruments['grid_number']
-
-
-
-
-    mapper_tenor = {'a':, 'b':, 'c':, 'd':}
-    mapper_tenor = {'a':, 'b':, 'c':, 'd':}
+#
+# def grid_based_recommendation(questions, investor_grid_number, instruments):
+#     instruments['grid_number']
+#
+#
+#
+#
+#     mapper_tenor = {'a':, 'b':, 'c':, 'd':}
+#     mapper_tenor = {'a':, 'b':, 'c':, 'd':}
 
 
 
 
     ########-----------------------
 
-i=214
-settlement_date = pd.to_datetime('today')
-maturity_date = pd.to_datetime(instruments['maturity_date'][i], format='%d-%m-%Y')
-coupon_rate = instruments['coupon_rate'][i]
-yield_rate = instruments['yield'][i]
-no_of_int_payments_per_year = instruments['no_of_int_payments_per_year'][i]
-macaulay_duration(settlement_date, maturity_date, coupon_rate, yield_rate, no_of_int_payments_per_year)
-
-instruments['isin'][i]
-
-
-
-
-def risk_calculator(df):
-    ### Estimate the Credit Risk, Interest Rate Risk and Liquidity Risk as per SEBI Guidelines
-
-    {}
-    df['credit_risk_value'] =
-
-x, y = macaulay_duration(settlement_date, maturity_date, coupon_rate, yield_rate, no_of_int_payments_per_year)
+# i=214
+# settlement_date = pd.to_datetime('today')
+# maturity_date = pd.to_datetime(instruments['maturity_date'][i], format='%d-%m-%Y')
+# coupon_rate = instruments['coupon_rate'][i]
+# yield_rate = instruments['yield'][i]
+# no_of_int_payments_per_year = instruments['no_of_int_payments_per_year'][i]
+# macaulay_duration(settlement_date, maturity_date, coupon_rate, yield_rate, no_of_int_payments_per_year)
+#
+# instruments['isin'][i]
+#
+#
+#
+#
+# def risk_calculator(df):
+#     ### Estimate the Credit Risk, Interest Rate Risk and Liquidity Risk as per SEBI Guidelines
+#
+#     {}
+#     df['credit_risk_value'] =
+#
+# x, y = macaulay_duration(settlement_date, maturity_date, coupon_rate, yield_rate, no_of_int_payments_per_year)

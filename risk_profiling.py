@@ -35,11 +35,11 @@ def macaulay_duration(settlement_date, maturity_date, coupon_rate, yield_rate, n
 
     return duration
 
-instruments = pd.read_csv('G:/Shared drives/Data Science/Bond Manager/Data/bonds_live_platform.csv')
+instruments = pd.read_csv('D:/anand.ts/Desktop/Hackathon/bond-advisor/bonds_live_platform.csv')
 
 def risk_grid_assignor(instruments):
     instruments['duration'] = 0.
-    mapper_freq = {'Yearly': 1, 'Half Yearly': 2, 'Quarterly': 4, 'Monthly': 12, 'On Maturity': 0, 'On Redemption': 0}
+    mapper_freq = {np.nan:1, 'Yearly': 1, 'Half Yearly': 2, 'Quarterly': 4, 'Monthly': 12, 'On Maturity': 0, 'On Redemption': 0}
     instruments['no_of_int_payments_per_year'] = instruments['interest_payment_frequency'].map(mapper_freq)
 
     for i in range(0, instruments.shape[0]):
@@ -72,15 +72,41 @@ def risk_grid_assignor(instruments):
 
     return instruments
 
-def investor_risk_assingor(
-
-)
+instruments = risk_grid_assignor(instruments)
 
 
+questions = pd.read_excel('D:/anand.ts/Desktop/Hackathon/Risk assessment.xlsx')
+def investor_grid_estimator(questions):
 
-########-----------------------
+    # Mapping the Investor the Grid
+    credit_risk_option = questions.loc[questions['Q.No'] == 1, 'Option'].values[0]
+    market_risk_option = questions.loc[questions['Q.No'] == 2, 'Option'].values[0]
+    risk_profile = credit_risk_option + '-' + market_risk_option
 
-i=61
+    risk_dict = {'a-a' : 1, 'b-a' : 2, 'c-a' : 3,
+                 'a-b' : 4, 'b-b' : 5, 'c-b' : 6,
+                 'a-c' : 7, 'b-c' : 8, 'c-c' : 9}
+
+    investor_grid_number = risk_dict[risk_profile]
+    return investor_grid_number
+
+investor_grid_number = 8
+
+def grid_based_recommendation(questions, investor_grid_number, instruments):
+    instruments['grid_number']
+
+
+
+
+    mapper_tenor = {'a':, 'b':, 'c':, 'd':}
+    mapper_tenor = {'a':, 'b':, 'c':, 'd':}
+
+
+
+
+    ########-----------------------
+
+i=214
 settlement_date = pd.to_datetime('today')
 maturity_date = pd.to_datetime(instruments['maturity_date'][i], format='%d-%m-%Y')
 coupon_rate = instruments['coupon_rate'][i]

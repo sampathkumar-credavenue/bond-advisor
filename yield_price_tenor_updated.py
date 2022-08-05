@@ -94,23 +94,23 @@ isin_lst = ["INE01YL07102", "INE06E507058"]
 isin_fetch(isin_lst)
 
 # dashboard
-
-def metrics(ptf):
-    isin = ptf.loc[0, "isin"]
-    seg = live_bonds.loc[live_bonds["isin"] == isin, ["industry"]].iloc[0, 0]
-    issuer = live_bonds.loc[live_bonds["isin"] == isin, ["name"]].iloc[0, 0]
-    mat = live_bonds.loc[live_bonds["isin"] == isin, ["maturity_date"]].iloc[0, 0]
-    rtng = live_bonds.loc[live_bonds["isin"] == isin, ["rating_yield_curve"]].iloc[0, 0]
-    yld, tnr = yield_curve(seg, mat, rtng)
-    ipy = live_bonds.loc[live_bonds["isin"] == isin, ["interest_payment_frequency"]].iloc[0, 0]
-    fv = live_bonds.loc[live_bonds["isin"] == isin, ["face_value"]].iloc[0, 0]
-    cpn = live_bonds.loc[live_bonds["isin"] == isin, ["coupon_rate"]].iloc[0, 0]
-    freq = int_payment_freq(ipy)
-    ind_current_price = indicative_price(freq, tnr, yld, fv, cpn)
-
-
-
-
-    return ind_current_price, issuer
-
-metrics(my_ptf)
+#
+# def metrics(ptf):
+#     isin = ptf.loc[0, "isin"]
+#     seg = live_bonds.loc[live_bonds["isin"] == isin, ["industry"]].iloc[0, 0]
+#     issuer = live_bonds.loc[live_bonds["isin"] == isin, ["name"]].iloc[0, 0]
+#     mat = live_bonds.loc[live_bonds["isin"] == isin, ["maturity_date"]].iloc[0, 0]
+#     rtng = live_bonds.loc[live_bonds["isin"] == isin, ["rating_yield_curve"]].iloc[0, 0]
+#     yld, tnr = yield_curve(seg, mat, rtng)
+#     ipy = live_bonds.loc[live_bonds["isin"] == isin, ["interest_payment_frequency"]].iloc[0, 0]
+#     fv = live_bonds.loc[live_bonds["isin"] == isin, ["face_value"]].iloc[0, 0]
+#     cpn = live_bonds.loc[live_bonds["isin"] == isin, ["coupon_rate"]].iloc[0, 0]
+#     freq = int_payment_freq(ipy)
+#     ind_current_price = indicative_price(freq, tnr, yld, fv, cpn)
+#
+#
+#
+#
+#     return ind_current_price, issuer
+#
+# metrics(my_ptf)

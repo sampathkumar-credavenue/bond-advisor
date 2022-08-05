@@ -35,7 +35,7 @@ def macaulay_duration(settlement_date, maturity_date, coupon_rate, yield_rate, n
 
     return duration
 
-instruments = pd.read_csv('D:/anand.ts/Desktop/Hackathon/bond-advisor/bonds_live_platform.csv')
+# instruments = pd.read_csv('D:/anand.ts/Desktop/Hackathon/bond-advisor/bonds_live_platform.csv')
 
 def risk_grid_assignor(instruments):
     instruments['duration'] = 0.

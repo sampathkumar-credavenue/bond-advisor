@@ -26,7 +26,23 @@ def indicative_price(m,t,ytm,fv,c):
     # c - coupon
     return ((fv * c / m * (1 - (1 + ytm / m) ** (-m * t))) / (ytm / m)) + fv * (1 + (ytm / m)) ** (-m * t)
 
+def risk_o_meter(crv, lrv, mrv):
+    score = max(((crv + lrv + mrv) / 3), lrv)
+    if score <= 1:
+        risk_cat = "Low"
+    elif (score <= 2) and (score > 1):
+        risk_cat = "Low to Moderate"
+    elif (score <= 3) and (score > 2):
+        risk_cat = "Moderate"
+    elif (score <= 4) and (score > 3):
+        risk_cat = "Moderately High"
+    elif (score <= 5) and (score > 4):
+        risk_cat = "High"
+    else:
+        risk_cat = "Very High"
+    return risk_cat
+
 print(yield_curve("Corporates", '20/01/26', "BBB-"))
 print(indicative_price(2, yield_curve("Corporates", '20/01/26', "BBB-")[1], yield_curve("Corporates", '20/01/26', "BBB-")[0], 100, 0.1466))
-
+print(risk_o_meter(1,2,3))
 

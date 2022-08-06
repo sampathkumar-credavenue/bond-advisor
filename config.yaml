@@ -1,0 +1,17 @@
+credentials:
+  usernames:
+    rahul:
+      email: rahul.cs@go-yubi.com
+      name: Rahul C S
+      password: $2b$12$UvNzIpn/2o4I2df65iwep.5dHPM6X17gRqqY1fqJypAA6GDXMuKnO # pwd:123
+    anand:
+      email: anand.ts@go-yubi.com
+      name: Anand T S
+      password: $2b$12$6hTbSYqHcuDNpjlHOnkT5O4EHL8ggEifivUjvbwGbNvIa2IXzkwSS # pwd:456
+cookie:
+  expiry_days: 0
+  key: some_signature_key
+  name: some_cookie_name
+preauthorized:
+  emails:
+  - rahul.cs@go-yubi.com

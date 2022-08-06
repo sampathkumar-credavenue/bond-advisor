@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import datetime
 from dateutil.relativedelta import relativedelta
+import math
 
 def macaulay_duration(settlement_date, maturity_date, coupon_rate, yield_rate, no_of_int_payments_per_year):
 
@@ -135,15 +136,14 @@ def grid_based_recommendation(questions, investor_grid_number, instruments):
     most_similar_isins = list(grid_instruments.sort_values(['euclidean', 'liq_risk_value'], ascending=[True, True])['isin'])[0:2]
     return most_similar_isins
 
-    ########-----------------------
-
 
 ### PEOPLE SIMILAR TO YOU HAVE INVESTED IN THIS
 inv_details = pd.read_csv('investor_details_database.csv')
 inv_transactions = pd.read_csv('investor_portfolio_database.csv')
 current_investor_id = 4
+investor_grid_number = 6
 
-def similar_user_based_recommendation(current_investor_id, inv_details, inv_transactions):
+def similar_user_based_recommendation(current_investor_id, investor_grid_number, inv_details, inv_transactions):
 
     inv_transactions['market_risk_value_grid'] = 1
     inv_transactions.loc[inv_transactions['duration'] > 0.5, 'market_risk_value_grid'] = 2
@@ -162,8 +162,6 @@ def similar_user_based_recommendation(current_investor_id, inv_details, inv_tran
     inv_transactions.loc[(inv_transactions['credit_risk_value_grid'] >= 12) & (inv_transactions['market_risk_value_grid'] >= 5), 'grid_number'] = 7
     inv_transactions.loc[(inv_transactions['credit_risk_value_grid'].isin([10, 11])) & (inv_transactions['market_risk_value_grid'] >= 5), 'grid_number'] = 8
     inv_transactions.loc[(inv_transactions['credit_risk_value_grid'] <= 9) & (inv_transactions['market_risk_value_grid'] >= 5), 'grid_number'] = 9
-
-    perc_of_inv_in_your_grid =
 
     # Finding the Similarity
     current_inv_details = inv_details.loc[inv_details['investor_id'] == current_investor_id, :]
@@ -185,27 +183,34 @@ def similar_user_based_recommendation(current_investor_id, inv_details, inv_tran
     # Similar Investor's Trade
     similar_inv_trade = inv_transactions.loc[inv_transactions['investor_id'] == req_db.loc[0, 'investor_id'], :]
 
-    # % of Transactions in the Same Grid by your Similar Customers [Top 5 Considered to be the most Similar Investors]
+    # % of Transactions in the Same Grid by your Similar Investors [Top 5 Considered to be the most Similar Investors]
     current_inv_transactions = inv_transactions.loc[inv_transactions['investor_id'] == current_investor_id, :]
     if req_db.shape[0] < 5:
-        inv_transactions.loc[inv_transactions['investor_id'].isin(list(req_db['investor_id'])), :]
+        x = inv_transactions.loc[inv_transactions['investor_id'].isin(list(req_db['investor_id'])), 'grid_number']
+        perc_of_trans_in_same_grid_by_sim_inv = sum(x == investor_grid_number) / x.shape[0]
     else:
+        top_5_sim_inv = list(req_db['investor_id'][0:5])
+        x = inv_transactions.loc[inv_transactions['investor_id'].isin(top_5_sim_inv), 'grid_number']
+        perc_of_trans_in_same_grid_by_sim_inv = sum(x == investor_grid_number) / x.shape[0]
 
-    # Similar Investor Based Summary on Risk Taking Levels  
+    # Similar Investor Based Summary on Risk Taking Levels
+    sim_inv_grid_number = x.mode().values[0]
 
-    return similar_inv_trade
+    # Credit Risk and Market Risk Summary based on Similar Investors...
+    y = [1, 4, 7, 2, 5, 8, 3, 6, 9]
 
+    if math.ceil(y.index(sim_inv_grid_number) / 3) > math.ceil(y.index(investor_grid_number) / 3):
+        credit_risk_summary = 'Similar Investors are taking more market risk than you'
+    elif math.ceil(sim_inv_grid_number / 3) == math.ceil(investor_grid_number / 3):
+        credit_risk_summary = 'Similar Investors are taking same market risk as you'
+    else:
+        credit_risk_summary = 'Similar Investors are taking less market risk than you'
 
-i=214
-settlement_date = pd.to_datetime('today')
-maturity_date = pd.to_datetime(instruments['maturity_date'][i], format='%d-%m-%Y')
-coupon_rate = instruments['coupon_rate'][i]
-yield_rate = instruments['yield'][i]
-no_of_int_payments_per_year = instruments['no_of_int_payments_per_year'][i]
-macaulay_duration(settlement_date, maturity_date, coupon_rate, yield_rate, no_of_int_payments_per_year)
+    if math.ceil(sim_inv_grid_number / 3) > math.ceil(investor_grid_number / 3):
+        market_risk_summary = 'Similar Investors are taking more market risk than you'
+    elif math.ceil(sim_inv_grid_number / 3) == math.ceil(investor_grid_number / 3):
+        market_risk_summary = 'Similar Investors are taking same market risk as you'
+    else:
+        market_risk_summary = 'Similar Investors are taking less market risk than you'
 
-instruments['isin'][i]
-
-
-
-x, y = macaulay_duration(settlement_date, maturity_date, coupon_rate, yield_rate, no_of_int_payments_per_year)
+    return similar_inv_trade, perc_of_trans_in_same_grid_by_sim_inv, credit_risk_summary, market_risk_summary
